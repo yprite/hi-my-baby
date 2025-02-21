@@ -78,20 +78,7 @@ import { CATEGORY_COLORS, CATEGORIES } from './context/CategoryConstants';
 import { READY_STATUS, READY_STATUS_COLORS } from './context/ReadyStatusConstants';
 import { READY_TIMING, READY_TIMING_COLORS } from './context/ReadyTimingConstants';
 import { getNextReadyStatus } from './utils/ReadystatusUtils';
-
-
-// 다음 시기로 변경하는 함수
-const getNextTiming = (currentTiming) => {
-    switch (currentTiming) {
-        case READY_TIMING.EARLY:
-            return READY_TIMING.LATE;
-        case READY_TIMING.LATE:
-            return READY_TIMING.EARLY;
-        default:
-            return READY_TIMING.EARLY;
-    }
-};
-
+import { getNextTimingStatus } from './utils/TimingStatusUtils';
 
 
 function App() {
@@ -161,7 +148,7 @@ function App() {
 
     // 준비 상태 변경 함수
     const handleReadyTimingChange = (rowIndex, currentTiming) => {
-        const nextTiming = getNextTiming(currentTiming);
+        const nextTiming = getNextTimingStatus(currentTiming);
         setTableData(prev => prev.map((row, index) =>
             index === rowIndex ? { ...row, timing: nextTiming } : row
         ));
