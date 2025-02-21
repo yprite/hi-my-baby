@@ -77,20 +77,8 @@ import { EditableCell } from './components/EditableCell';
 import { CATEGORY_COLORS, CATEGORIES } from './context/CategoryConstants';
 import { READY_STATUS, READY_STATUS_COLORS } from './context/ReadyStatusConstants';
 import { READY_TIMING, READY_TIMING_COLORS } from './context/ReadyTimingConstants';
+import { getNextReadyStatus } from './utils/ReadystatusUtils';
 
-// 다음 상태로 변경하는 함수
-const getNextStatus = (currentStatus) => {
-    switch (currentStatus) {
-        case READY_STATUS.READY:
-            return READY_STATUS.IN_PROGRESS;
-        case READY_STATUS.IN_PROGRESS:
-            return READY_STATUS.COMPLETED;
-        case READY_STATUS.COMPLETED:
-            return READY_STATUS.READY;
-        default:
-            return READY_STATUS.READY;
-    }
-};
 
 // 다음 시기로 변경하는 함수
 const getNextTiming = (currentTiming) => {
@@ -165,7 +153,7 @@ function App() {
 
     // 준비 상태 변경 함수
     const handleReadyStatusChange = (rowIndex, currentStatus) => {
-        const nextStatus = getNextStatus(currentStatus);
+        const nextStatus = getNextReadyStatus(currentStatus);
         setTableData(prev => prev.map((row, index) =>
             index === rowIndex ? { ...row, readyStatus: nextStatus } : row
         ));
