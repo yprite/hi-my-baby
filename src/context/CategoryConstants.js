@@ -24,29 +24,3 @@ export const CATEGORIES = [
     '아기 위생용품', '아기 세제', '기저귀', '외출용품', '놀이용품',
     '가전/가구', '산모용품', '상비약'
 ];
-
-// 준비 상태 정의
-export const READY_STATUS = {
-    READY: '준비 전',
-    IN_PROGRESS: '진행중',
-    COMPLETED: '완료'
-};
-
-// 준비 상태별 색상 정의
-export const READY_STATUS_COLORS = {
-    [READY_STATUS.READY]: '#708090',
-    [READY_STATUS.IN_PROGRESS]: '#1e90ff',
-    [READY_STATUS.COMPLETED]: '#32cd32'
-};
-
-// 준비 시기 정의
-export const READY_TIMING = {
-    EARLY: '산전',
-    LATE: '산후'
-};
-
-// 준비 시기별 색상 정의
-export const READY_TIMING_COLORS = {
-    [READY_TIMING.EARLY]: '#ce694c',
-    [READY_TIMING.LATE]: '#4cb1ce'
-};

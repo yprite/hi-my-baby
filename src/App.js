@@ -74,7 +74,9 @@ import { getChakraColorScheme } from './utils/colorUtils';
 import { LucideIcon } from './components/LucideIcon';
 import { EditableCell } from './components/EditableCell';
 
-import { CATEGORY_COLORS, CATEGORIES, READY_STATUS, READY_STATUS_COLORS, READY_TIMING, READY_TIMING_COLORS } from './constants';
+import { CATEGORY_COLORS, CATEGORIES } from './context/CategoryConstants';
+import { READY_STATUS, READY_STATUS_COLORS } from './context/ReadyStatusConstants';
+import { READY_TIMING, READY_TIMING_COLORS } from './context/ReadyTimingConstants';
 
 // 다음 상태로 변경하는 함수
 const getNextStatus = (currentStatus) => {
