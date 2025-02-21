@@ -19,8 +19,14 @@ import {
     VStack,
     useDisclosure,
     Text,
-    Input
+    Input,
+    Table,
+    Thead,
+    Tr,
+    Tbody,
+    Td
 } from '@chakra-ui/react';
+import { flexRender } from '@tanstack/react-table';
 
 import {
     Info,
@@ -47,6 +53,7 @@ import { READY_TIMING, READY_TIMING_COLORS } from './context/ReadyTimingConstant
 import { getNextReadyStatus } from './utils/ReadystatusUtils';
 import { getNextTimingStatus } from './utils/TimingStatusUtils';
 import { TableComponent } from './components/TableComponent';
+import FilterComponent from './components/FilterComponent';
 
 function App() {
 
@@ -459,7 +466,12 @@ function App() {
             <Container maxW="100%" py={8}>
                 <Heading textAlign="center" mb={8}>출산 준비물 리스트</Heading>
                 <Box overflowX="auto" mx={-4}>
-                    <TableComponent table={table} filters={filters} toggleFilter={toggleFilter} addNewRow={addNewRow} />
+                    <TableComponent
+                        table={table}
+                        filters={filters}
+                        toggleFilter={toggleFilter}
+                        addNewRow={addNewRow}
+                    />
                 </Box>
             </Container>
         </ChakraProvider>

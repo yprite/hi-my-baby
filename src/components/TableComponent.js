@@ -64,8 +64,7 @@ import {
     PhoneIcon
 } from '@chakra-ui/icons';
 
-
-
+import FilterComponent from './FilterComponent';
 
 export const TableComponent = ({ table, filters, toggleFilter, addNewRow }) => {
     return (
@@ -73,113 +72,14 @@ export const TableComponent = ({ table, filters, toggleFilter, addNewRow }) => {
             <Thead>
                 {table.getHeaderGroups().map(headerGroup => (
                     <Tr key={headerGroup.id}>
-                        {headerGroup.headers.map(header => {
-                            // 분류, 준비시기, 준비완료 컬럼에 대해서만 필터 기능 추가
-                            if (['category', 'timing', 'readyStatus'].includes(header.column.columnDef.accessorKey)) {
-                                const { isOpen, onOpen, onClose } = useDisclosure();
-                                return (
-                                    <Th key={header.id} p={2}>
-                                        <Popover isOpen={isOpen} onClose={onClose} placement="bottom-start">
-                                            <PopoverTrigger>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={onOpen}
-                                                    rightIcon={filters[header.column.id].length ? <CheckIcon /> : undefined}
-                                                >
-                                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                                    {filters[header.column.columnDef.accessorKey].length ? ` (${filters[header.column.columnDef.accessorKey].length})` : ''}
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent w="auto">
-                                                <PopoverBody p={2}>
-                                                    <VStack align="stretch" spacing={1}>
-                                                        {header.column.columnDef.accessorKey === 'category' &&
-                                                            CATEGORIES.map(category => (
-                                                                <Button
-                                                                    key={category}
-                                                                    size="sm"
-                                                                    variant={filters.category.includes(category) ? "solid" : "ghost"}
-                                                                    colorScheme={CATEGORY_COLORS[category]}
-                                                                    onClick={() => toggleFilter('category', category)}
-                                                                    justifyContent="flex-start"
-                                                                >
-                                                                    {category}
-                                                                </Button>
-                                                            ))
-                                                        }
-                                                        {header.column.columnDef.accessorKey === 'timing' &&
-                                                            Object.values(READY_TIMING).map(timing => (
-                                                                <Button
-                                                                    key={timing}
-                                                                    size="sm"
-                                                                    variant={filters.timing.includes(timing) ? "solid" : "ghost"}
-                                                                    colorScheme={getChakraColorScheme(READY_TIMING_COLORS[timing])}
-                                                                    onClick={() => toggleFilter('timing', timing)}
-                                                                    justifyContent="flex-start"
-                                                                >
-                                                                    {timing}
-                                                                </Button>
-                                                            ))
-                                                        }
-                                                        {header.column.columnDef.accessorKey === 'readyStatus' &&
-                                                            Object.values(READY_STATUS).map(status => (
-                                                                <Button
-                                                                    key={status}
-                                                                    size="sm"
-                                                                    variant={filters.readyStatus.includes(status) ? "solid" : "ghost"}
-                                                                    colorScheme={READY_STATUS_COLORS[status]}
-                                                                    style={{
-                                                                        backgroundColor: filters.readyStatus.includes(status)
-                                                                            ? READY_STATUS_COLORS[status]
-                                                                            : 'transparent'
-                                                                    }}
-                                                                    onClick={() => toggleFilter('readyStatus', status)}
-                                                                    justifyContent="flex-start"
-                                                                >
-                                                                    {status}
-                                                                </Button>
-                                                            ))
-                                                        }
-                                                    </VStack>
-                                                </PopoverBody>
-                                            </PopoverContent>
-                                        </Popover>
-                                    </Th>
-                                );
-                            }
-
-                            // 다른 컬럼들은 기존 스타일 유지
-                            return (
-                                <Th
-                                    key={header.id}
-                                    onClick={header.column.getToggleSortingHandler()}
-                                    cursor="pointer"
-                                    whiteSpace="normal"
-                                    p={2}
-                                    minW={{
-                                        항목: "100px",
-                                        "제품명/브랜드": "250px",
-                                        분류: "100px",
-                                        준비시기: "100px",
-                                        필요개수: "80px",
-                                        구매개수: "80px",
-                                        단가: "100px",
-                                        비용: "100px",
-                                        준비완료: "80px",
-                                        내용: "200px",
-                                        "준비/구입경로": "120px",
-                                        참고사진: "80px"
-                                    }[header.column.columnDef.header]}
-                                >
-                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                    {{
-                                        asc: ' 🔼',
-                                        desc: ' 🔽',
-                                    }[header.column.getIsSorted()] ?? null}
-                                </Th>
-                            );
-                        })}
+                        {headerGroup.headers.map(header => (
+                            <FilterComponent
+                                key={header.id}
+                                header={header}
+                                filters={filters}
+                                toggleFilter={toggleFilter}
+                            />
+                        ))}
                     </Tr>
                 ))}
             </Thead>
