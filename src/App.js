@@ -534,6 +534,25 @@ function App() {
         getSortedRowModel: getSortedRowModel(),
     });
 
+    // 새 행 추가 함수
+    const addNewRow = () => {
+        const newRow = {
+            item: '',
+            productBrand: '',
+            category: '',
+            timing: '',
+            requiredQty: 0,
+            purchasedQty: 0,
+            unitPrice: 0,
+            totalCost: 0,
+            readyStatus: READY_STATUS.READY,
+            notes: '',
+            source: '',
+            image: ''
+        };
+        setTableData(prev => [...prev, newRow]);
+    };
+
     return (
         <ChakraProvider>
             <Container maxW="100%" py={8}>
@@ -670,6 +689,23 @@ function App() {
                                     ))}
                                 </Tr>
                             ))}
+                            {/* 행 추가 버튼을 포함한 행 */}
+                            <Tr>
+                                <Td colSpan={table.getAllColumns().length}>
+                                    <Button
+                                        leftIcon={<LucideIcon icon={PlusSquare} />}
+                                        onClick={addNewRow}
+                                        size="sm"
+                                        colorScheme="blue"
+                                        variant="ghost"
+                                        mx="auto"
+                                        display="block"
+                                        w="100%"
+                                    >
+                                        새로운 항목 추가
+                                    </Button>
+                                </Td>
+                            </Tr>
                         </Tbody>
                     </Table>
                 </Box>
