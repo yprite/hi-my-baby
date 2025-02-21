@@ -127,7 +127,7 @@ function App() {
                 purchasedQty: 2,
                 unitPrice: 15000,
                 totalCost: 30000,
-                completed: READY_STATUS.READY,  // 초기값을 '준비 전'으로 설정
+                readyStatus: READY_STATUS.READY,  // 초기값을 '준비 전'으로 설정
                 notes: '신생아용 160ml',
                 source: '쿠팡',
                 image: 'url_to_image'
@@ -141,7 +141,7 @@ function App() {
                 purchasedQty: 3,
                 unitPrice: 12000,
                 totalCost: 36000,
-                completed: READY_STATUS.READY,  // 초기값을 '준비 전'으로 설정
+                readyStatus: READY_STATUS.READY,  // 초기값을 '준비 전'으로 설정
                 notes: '신생아용 3개세트',
                 source: '마켓컬리',
                 image: 'url_to_image'
@@ -153,11 +153,28 @@ function App() {
     // 데이터 상태 관리 추가
     const [tableData, setTableData] = React.useState(data);
 
+    // 필터 상태 추가
+    const [filters, setFilters] = React.useState({
+        category: [],
+        timing: [],
+        readyStatus: []
+    });
+
+    // 필터링된 데이터 계산
+    const filteredData = React.useMemo(() => {
+        return tableData.filter(row => {
+            const categoryMatch = filters.category.length === 0 || filters.category.includes(row.category);
+            const timingMatch = filters.timing.length === 0 || filters.timing.includes(row.timing);
+            const readyStatusMatch = filters.readyStatus.length === 0 || filters.readyStatus.includes(row.readyStatus);
+            return categoryMatch && timingMatch && readyStatusMatch;
+        });
+    }, [tableData, filters]);
+
     // 준비 상태 변경 함수
     const handleReadyStatusChange = (rowIndex, currentStatus) => {
         const nextStatus = getNextStatus(currentStatus);
         setTableData(prev => prev.map((row, index) =>
-            index === rowIndex ? { ...row, completed: nextStatus } : row
+            index === rowIndex ? { ...row, readyStatus: nextStatus } : row
         ));
     };
 
@@ -174,6 +191,16 @@ function App() {
         setTableData(prev => prev.map((row, index) =>
             index === rowIndex ? { ...row, category: newCategory } : row
         ));
+    };
+
+    // 필터 토글 함수
+    const toggleFilter = (type, value) => {
+        setFilters(prev => ({
+            ...prev,
+            [type]: prev[type].includes(value)
+                ? prev[type].filter(v => v !== value)
+                : [...prev[type], value]
+        }));
     };
 
     // 컬럼 정의 수정
@@ -298,6 +325,20 @@ function App() {
                         type="purchasedQty"
                         value={info.getValue().toString()}
                         onSubmit={(newValue) => {
+                            // 숫자만 허용
+                            const numericValue = parseInt(newValue);
+                            if (!isNaN(numericValue)) {
+                                // 구매개수가 변경되면 비용도 자동으로 업데이트
+                                setTableData(prev => prev.map((row, index) =>
+                                    index === info.row.index
+                                        ? {
+                                            ...row,
+                                            purchasedQty: numericValue,
+                                            totalCost: row.unitPrice * numericValue
+                                        }
+                                        : row
+                                ));
+                            }
                         }}
                     />
                 )
@@ -313,6 +354,20 @@ function App() {
                             currency: 'KRW'
                         }).format(info.getValue())}
                         onSubmit={(newValue) => {
+                            // 숫자만 허용하고 쉼표 제거
+                            const numericValue = parseInt(newValue.replace(/[^0-9]/g, ''));
+                            if (!isNaN(numericValue)) {
+                                // 단가가 변경되면 비용도 자동으로 업데이트
+                                setTableData(prev => prev.map((row, index) =>
+                                    index === info.row.index
+                                        ? {
+                                            ...row,
+                                            unitPrice: numericValue,
+                                            totalCost: numericValue * row.purchasedQty
+                                        }
+                                        : row
+                                ));
+                            }
                         }}
                     />
                 )
@@ -320,20 +375,18 @@ function App() {
             {
                 header: '비용',
                 accessorKey: 'totalCost',
-                cell: info =>
-                    <EditableCell
-                        type="totalCost"
-                        value={new Intl.NumberFormat('ko-KR', {
+                cell: info => (
+                    <Box px={2}>
+                        {new Intl.NumberFormat('ko-KR', {
                             style: 'currency',
                             currency: 'KRW'
                         }).format(info.getValue())}
-                        onSubmit={(newValue) => {
-                        }}
-                    />
+                    </Box>
+                )
             },
             {
                 header: '준비완료',
-                accessorKey: 'completed',
+                accessorKey: 'readyStatus',
                 cell: info => (
                     <Button
                         size="sm"
@@ -385,12 +438,12 @@ function App() {
                     '없음'
             },
         ],
-        []
+        [filters, toggleFilter]
     );
 
     // table 설정 수정
     const table = useReactTable({
-        data: tableData,  // data 대신 tableData 사용
+        data: filteredData,  // 필터링된 데이터 사용
         columns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -405,38 +458,112 @@ function App() {
                         <Thead>
                             {table.getHeaderGroups().map(headerGroup => (
                                 <Tr key={headerGroup.id}>
-                                    {headerGroup.headers.map(header => (
-                                        <Th
-                                            key={header.id}
-                                            onClick={header.column.getToggleSortingHandler()}
-                                            cursor="pointer"
-                                            whiteSpace="normal"
-                                            p={2}
-                                            minW={{
-                                                항목: "100px",
-                                                "제품명/브랜드": "250px",
-                                                분류: "100px",
-                                                준비시기: "100px",
-                                                필요개수: "80px",
-                                                구매개수: "80px",
-                                                단가: "100px",
-                                                비용: "100px",
-                                                준비완료: "80px",
-                                                내용: "200px",
-                                                "준비/구입경로": "120px",
-                                                참고사진: "80px"
-                                            }[header.column.columnDef.header]}
-                                        >
-                                            {flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                            {{
-                                                asc: ' 🔼',
-                                                desc: ' 🔽',
-                                            }[header.column.getIsSorted()] ?? null}
-                                        </Th>
-                                    ))}
+                                    {headerGroup.headers.map(header => {
+                                        // 분류, 준비시기, 준비완료 컬럼에 대해서만 필터 기능 추가
+                                        if (['분류', '준비시기', '준비완료'].includes(header.column.columnDef.header)) {
+                                            const { isOpen, onOpen, onClose } = useDisclosure();
+                                            return (
+                                                <Th key={header.id} p={2}>
+                                                    <Popover isOpen={isOpen} onClose={onClose} placement="bottom-start">
+                                                        <PopoverTrigger>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={onOpen}
+                                                                rightIcon={filters[header.column.id].length ? <CheckIcon /> : undefined}
+                                                            >
+                                                                {header.column.columnDef.header}
+                                                                {filters[header.column.id].length ? ` (${filters[header.column.id].length})` : ''}
+                                                            </Button>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent w="auto">
+                                                            <PopoverBody p={2}>
+                                                                <VStack align="stretch" spacing={1}>
+                                                                    {header.column.columnDef.header === '분류' && 
+                                                                        categories.map(category => (
+                                                                            <Button
+                                                                                key={category}
+                                                                                size="sm"
+                                                                                variant={filters.category.includes(category) ? "solid" : "ghost"}
+                                                                                colorScheme={categoryColors[category]}
+                                                                                onClick={() => toggleFilter('category', category)}
+                                                                                justifyContent="flex-start"
+                                                                            >
+                                                                                {category}
+                                                                            </Button>
+                                                                        ))
+                                                                    }
+                                                                    {header.column.columnDef.header === '준비시기' && 
+                                                                        Object.values(READY_TIMING).map(timing => (
+                                                                            <Button
+                                                                                key={timing}
+                                                                                size="sm"
+                                                                                variant={filters.timing.includes(timing) ? "solid" : "ghost"}
+                                                                                style={{
+                                                                                    backgroundColor: filters.timing.includes(timing) 
+                                                                                        ? READY_TIMING_COLORS[timing] 
+                                                                                        : 'transparent'
+                                                                                }}
+                                                                                onClick={() => toggleFilter('timing', timing)}
+                                                                                justifyContent="flex-start"
+                                                                            >
+                                                                                {timing}
+                                                                            </Button>
+                                                                        ))
+                                                                    }
+                                                                    {header.column.columnDef.header === '준비완료' && 
+                                                                        Object.values(READY_STATUS).map(status => (
+                                                                            <Button
+                                                                                key={status}
+                                                                                size="sm"
+                                                                                variant={filters.readyStatus.includes(status) ? "solid" : "ghost"}
+                                                                                colorScheme={READY_STATUS_COLORS[status]}
+                                                                                onClick={() => toggleFilter('readyStatus', status)}
+                                                                                justifyContent="flex-start"
+                                                                            >
+                                                                                {status}
+                                                                            </Button>
+                                                                        ))
+                                                                    }
+                                                                </VStack>
+                                                            </PopoverBody>
+                                                        </PopoverContent>
+                                                    </Popover>
+                                                </Th>
+                                            );
+                                        }
+
+                                        // 다른 컬럼들은 기존 스타일 유지
+                                        return (
+                                            <Th
+                                                key={header.id}
+                                                onClick={header.column.getToggleSortingHandler()}
+                                                cursor="pointer"
+                                                whiteSpace="normal"
+                                                p={2}
+                                                minW={{
+                                                    항목: "100px",
+                                                    "제품명/브랜드": "250px",
+                                                    분류: "100px",
+                                                    준비시기: "100px",
+                                                    필요개수: "80px",
+                                                    구매개수: "80px",
+                                                    단가: "100px",
+                                                    비용: "100px",
+                                                    준비완료: "80px",
+                                                    내용: "200px",
+                                                    "준비/구입경로": "120px",
+                                                    참고사진: "80px"
+                                                }[header.column.columnDef.header]}
+                                            >
+                                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                                {{
+                                                    asc: ' 🔼',
+                                                    desc: ' 🔽',
+                                                }[header.column.getIsSorted()] ?? null}
+                                            </Th>
+                                        );
+                                    })}
                                 </Tr>
                             ))}
                         </Thead>
@@ -524,7 +651,7 @@ const EditableCell = ({ value, type, onSubmit, options }) => {
             case "purchasedQty": return "80px";
             case "unitPrice": return "100px";
             case "totalCost": return "100px";
-            case "isReady": return "80px";
+            case "readyStatus": return "80px";
             case "content": return "200px";
             case "source": return "120px";
             case "photo": return "80px";
