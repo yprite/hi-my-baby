@@ -69,21 +69,10 @@ import {
     ShoppingBasket,  // Lucide의 Image 아이콘
 } from 'lucide-react';
 import Color from 'color';
-import { getChakraColorScheme } from './utils/colorUtils';
 
-// Chakra UI의 기본 컬러 스킴 정의
-const CHAKRA_COLOR_SCHEMES = {
-    red: '#E53E3E',
-    orange: '#DD6B20',
-    yellow: '#D69E2E',
-    green: '#38A169',
-    teal: '#319795',
-    blue: '#3182CE',
-    cyan: '#00B5D8',
-    purple: '#805AD5',
-    pink: '#D53F8C',
-    gray: '#718096'
-};
+import { getChakraColorScheme } from './utils/colorUtils';
+import { LucideIcon } from './components/LucideIcon';
+
 
 // 분류별 색상 매핑
 const CATEGORY_COLORS = {
@@ -161,14 +150,7 @@ const getNextTiming = (currentTiming) => {
     }
 };
 
-// Lucide 아이콘을 Chakra UI와 함께 사용하기 위한 wrapper 컴포넌트
-const LucideIcon = ({ icon: Icon, ...props }) => (
-    <Icon
-        size={16}
-        strokeWidth={2}
-        {...props}
-    />
-);
+
 
 function App() {
 
