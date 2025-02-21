@@ -16,7 +16,7 @@ import {
     Container,
     Heading,
     Box,
-    Image,
+    Image as ChakraImage,
     Tag,
     HStack,
     Icon,
@@ -35,8 +35,38 @@ import {
     PopoverBody,
     VStack,
     useDisclosure,
+    Text
 } from '@chakra-ui/react';
-import { CheckIcon, CloseIcon, EditIcon } from '@chakra-ui/icons';
+import {
+    CheckIcon,
+    CalendarIcon,
+    InfoIcon,
+    TimeIcon,
+    RepeatIcon,
+    StarIcon,
+    AttachmentIcon,
+    ViewIcon,
+    EditIcon,
+    PlusSquareIcon,
+    SettingsIcon,
+    QuestionIcon,
+    PhoneIcon
+} from '@chakra-ui/icons';
+import {
+    Info,
+    Star,
+    Settings,
+    Calendar,
+    PlusSquare,
+    Repeat,
+    Calculator,  // 단가용
+    DollarSign,  // 비용용
+    CheckCircle,
+    HelpCircle,
+    Store,       // 구입경로용
+    Image as LucideImage,
+    ShoppingBasket,  // Lucide의 Image 아이콘
+} from 'lucide-react';
 
 // 준비 상태 정의
 const READY_STATUS = {
@@ -89,6 +119,15 @@ const getNextTiming = (currentTiming) => {
             return READY_TIMING.EARLY;
     }
 };
+
+// Lucide 아이콘을 Chakra UI와 함께 사용하기 위한 wrapper 컴포넌트
+const LucideIcon = ({ icon: Icon, ...props }) => (
+    <Icon
+        size={16}
+        strokeWidth={2}
+        {...props}
+    />
+);
 
 function App() {
     // 분류별 색상 매핑
@@ -203,11 +242,19 @@ function App() {
         }));
     };
 
+    // 헤더 렌더링 함수
+    const renderHeader = (text, icon) => (
+        <HStack spacing={2}>
+            {icon}
+            <Text>{text}</Text>
+        </HStack>
+    );
+
     // 컬럼 정의 수정
     const columns = React.useMemo(
         () => [
             {
-                header: '항목',
+                header: ({ column }) => renderHeader('항목', <LucideIcon icon={ShoppingBasket} />),
                 accessorKey: 'item',
                 cell: info => (
                     <EditableCell
@@ -228,7 +275,7 @@ function App() {
                 )
             },
             {
-                header: '제품명/브랜드',
+                header: ({ column }) => renderHeader('제품명/브랜드', <LucideIcon icon={Star} />),
                 accessorKey: 'productBrand',
                 cell: info => (
                     <EditableCell
@@ -240,7 +287,7 @@ function App() {
                 )
             },
             {
-                header: '분류',
+                header: ({ column }) => renderHeader('분류', <LucideIcon icon={Settings} />),
                 accessorKey: 'category',
                 cell: info => {
                     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -284,7 +331,7 @@ function App() {
                 }
             },
             {
-                header: '준비시기',
+                header: ({ column }) => renderHeader('준비시기', <LucideIcon icon={Calendar} />),
                 accessorKey: 'timing',
                 cell: info => (
                     <Button
@@ -302,7 +349,7 @@ function App() {
                 )
             },
             {
-                header: '필요개수',
+                header: ({ column }) => renderHeader('필요개수', <LucideIcon icon={PlusSquare} />),
                 accessorKey: 'requiredQty',
                 cell: info => (
                     <EditableCell
@@ -318,7 +365,7 @@ function App() {
                 )
             },
             {
-                header: '구매개수',
+                header: ({ column }) => renderHeader('구매개수', <LucideIcon icon={Repeat} />),
                 accessorKey: 'purchasedQty',
                 cell: info => (
                     <EditableCell
@@ -344,7 +391,7 @@ function App() {
                 )
             },
             {
-                header: '단가',
+                header: ({ column }) => renderHeader('단가', <LucideIcon icon={Calculator} />),
                 accessorKey: 'unitPrice',
                 cell: info => (
                     <EditableCell
@@ -373,7 +420,7 @@ function App() {
                 )
             },
             {
-                header: '비용',
+                header: ({ column }) => renderHeader('비용', <LucideIcon icon={DollarSign} />),
                 accessorKey: 'totalCost',
                 cell: info => (
                     <Box px={2}>
@@ -385,7 +432,7 @@ function App() {
                 )
             },
             {
-                header: '준비완료',
+                header: ({ column }) => renderHeader('준비완료', <LucideIcon icon={CheckCircle} />),
                 accessorKey: 'readyStatus',
                 cell: info => (
                     <Button
@@ -402,7 +449,7 @@ function App() {
                 ),
             },
             {
-                header: '내용',
+                header: ({ column }) => renderHeader('내용', <LucideIcon icon={HelpCircle} />),
                 accessorKey: 'notes',
                 cell: info => (
                     <EditableCell
@@ -414,7 +461,7 @@ function App() {
                 )
             },
             {
-                header: '준비/구입경로',
+                header: ({ column }) => renderHeader('준비/구입경로', <LucideIcon icon={Store} />),
                 accessorKey: 'source',
                 cell: info => (
                     <EditableCell
@@ -426,16 +473,16 @@ function App() {
                 )
             },
             {
-                header: '참고사진',
+                header: ({ column }) => renderHeader('참고사진', <LucideIcon icon={LucideImage} />),
                 accessorKey: 'image',
-                cell: info => info.getValue() ?
-                    <Image
+                cell: info => info.getValue() ? (
+                    <ChakraImage
                         src={info.getValue()}
                         alt="제품 이미지"
                         boxSize="50px"
                         objectFit="cover"
-                    /> :
-                    '없음'
+                    />
+                ) : '없음'
             },
         ],
         [filters, toggleFilter]
@@ -597,6 +644,7 @@ const EditableCell = ({ value, type, onSubmit, options }) => {
     const [isEditing, setIsEditing] = React.useState(false);
 
     // 향후 사용할 수 있어서 남겨놓음
+    // 예를 들면, 쿠팡, 마켓컬리, 온라인 쇼핑몰 등등 리스트화해놓고,사용자가 선택하면 그중에 선택하도록 제한하거나 추천
     // if (options) {
     //     return (
     //         <Popover
