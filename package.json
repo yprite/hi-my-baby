@@ -19,6 +19,12 @@
   },
   "homepage": "https://github.com/yprite/hi-my-baby#readme",
   "dependencies": {
+    "@chakra-ui/icons": "^2.2.4",
+    "@chakra-ui/react": "^2.10.6",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@tanstack/react-table": "^8.21.2",
+    "framer-motion": "^10.18.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -30,6 +36,8 @@
     "html-webpack-plugin": "^5.5.3",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^4.15.1",
+    "style-loader": "^3.3.3",
+    "css-loader": "^6.8.1"
   }
 }
