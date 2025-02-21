@@ -184,6 +184,7 @@ function App() {
                 accessorKey: 'item',
                 cell: info => (
                     <EditableCell
+                        type="item"
                         value={info.getValue()}
                         options={[
                             '젖병', '속싸개', '손수건', '기저귀', '물티슈',
@@ -191,7 +192,6 @@ function App() {
                             '젖병건조대', '아기욕조', '체온계', '마사지오일'
                         ]}
                         onSubmit={(newValue) => {
-                            console.log('항목 수정:', newValue);
                             // 여기에 데이터 업데이트 로직 추가
                             setTableData(prev => prev.map((row, index) =>
                                 index === info.row.index ? { ...row, item: newValue } : row
@@ -205,9 +205,9 @@ function App() {
                 accessorKey: 'productBrand',
                 cell: info => (
                     <EditableCell
+                        type="productBrand"
                         value={info.getValue()}
                         onSubmit={(newValue) => {
-                            console.log('제품명/브랜드 수정:', newValue);
                         }}
                     />
                 )
@@ -279,15 +279,14 @@ function App() {
                 accessorKey: 'requiredQty',
                 cell: info => (
                     <EditableCell
+                        type="requiredQty"
                         value={info.getValue().toString()}
                         onSubmit={(newValue) => {
                             // 숫자만 허용
                             if (!/^\d+$/.test(newValue)) {
                                 return;
                             }
-                            console.log('필요개수 수정:', newValue);
                         }}
-                        w="50%"
                     />
                 )
             },
@@ -296,9 +295,9 @@ function App() {
                 accessorKey: 'purchasedQty',
                 cell: info => (
                     <EditableCell
+                        type="purchasedQty"
                         value={info.getValue().toString()}
                         onSubmit={(newValue) => {
-                            console.log('구매개수 수정:', newValue);
                         }}
                     />
                 )
@@ -308,12 +307,12 @@ function App() {
                 accessorKey: 'unitPrice',
                 cell: info => (
                     <EditableCell
+                        type="unitPrice"
                         value={new Intl.NumberFormat('ko-KR', {
                             style: 'currency',
                             currency: 'KRW'
                         }).format(info.getValue())}
                         onSubmit={(newValue) => {
-                            console.log('단가 수정:', newValue);
                         }}
                     />
                 )
@@ -323,12 +322,12 @@ function App() {
                 accessorKey: 'totalCost',
                 cell: info =>
                     <EditableCell
+                        type="totalCost"
                         value={new Intl.NumberFormat('ko-KR', {
                             style: 'currency',
                             currency: 'KRW'
                         }).format(info.getValue())}
                         onSubmit={(newValue) => {
-                            console.log('비용 수정:', newValue);
                         }}
                     />
             },
@@ -354,9 +353,9 @@ function App() {
                 accessorKey: 'notes',
                 cell: info => (
                     <EditableCell
+                        type="notes"
                         value={info.getValue()}
                         onSubmit={(newValue) => {
-                            console.log('내용 수정:', newValue);
                         }}
                     />
                 )
@@ -366,9 +365,9 @@ function App() {
                 accessorKey: 'source',
                 cell: info => (
                     <EditableCell
+                        type="source"
                         value={info.getValue()}
                         onSubmit={(newValue) => {
-                            console.log('구입경로 수정:', newValue);
                         }}
                     />
                 )
@@ -467,52 +466,90 @@ function App() {
 }
 
 // EditableCell 컴포넌트를 수정하여 Select 컴포넌트로 변경
-const EditableCell = ({ value, onSubmit, options }) => {
+const EditableCell = ({ value, type, onSubmit, options }) => {
     const [isEditing, setIsEditing] = React.useState(false);
 
-    if (options) {
+    // 향후 사용할 수 있어서 남겨놓음
+    // if (options) {
+    //     return (
+    //         <Popover
+    //             isOpen={isEditing}
+    //             onClose={() => setIsEditing(false)}
+    //             placement="bottom-start"
+    //         >
+    //             <PopoverTrigger>
+    //                 <Button
+    //                     size="sm"
+    //                     variant="ghost"
+    //                     onClick={() => setIsEditing(true)}
+    //                     w="100%"
+    //                     justifyContent="flex-start"
+    //                     _hover={{
+    //                         bg: "gray.100"
+    //                     }}
+    //                 >
+    //                     {value || '선택하세요'}
+    //                 </Button>
+    //             </PopoverTrigger>
+    //             <PopoverContent w="auto">
+    //                 <PopoverBody p={2}>
+    //                     <VStack align="stretch" spacing={1}>
+    //                         {options.map(option => (
+    //                             <Button
+    //                                 key={option}
+    //                                 size="sm"
+    //                                 variant="ghost"
+    //                                 onClick={() => {
+    //                                     onSubmit(option);
+    //                                     setIsEditing(false);
+    //                                 }}
+    //                                 justifyContent="flex-start"
+    //                                 w="100%"
+    //                             >
+    //                                 {option}
+    //                             </Button>
+    //                         ))}
+    //                     </VStack>
+    //                 </PopoverBody>
+    //             </PopoverContent>
+    //         </Popover>
+    //     );
+    // }
+
+    const getColumnWidth = (type) => {
+        switch(type) {
+            case "category": return "100px";
+            case "timing": return "100px";
+            case "requiredQty": return "80px";
+            case "purchasedQty": return "80px";
+            case "unitPrice": return "100px";
+            case "totalCost": return "100px";
+            case "isReady": return "80px";
+            case "content": return "200px";
+            case "source": return "120px";
+            case "photo": return "80px";
+            default: return "100%";
+        }
+    };
+
+    if (type == "requiredQty" || type == "purchasedQty" || type == "unitPrice" || type == "totalCost") {
         return (
-            <Popover
-                isOpen={isEditing}
-                onClose={() => setIsEditing(false)}
-                placement="bottom-start"
+            <Editable
+                defaultValue={value}
+                isPreviewFocusable={true}
+                submitOnBlur={true}
+                onSubmit={onSubmit}
             >
-                <PopoverTrigger>
-                    <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setIsEditing(true)}
-                        w="100%"
-                        justifyContent="flex-start"
-                        _hover={{
-                            bg: "gray.100"
-                        }}
-                    >
-                        {value || '선택하세요'}
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent w="auto">
-                    <PopoverBody p={2}>
-                        <VStack align="stretch" spacing={1}>
-                            {options.map(option => (
-                                <Button
-                                    key={option}
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => {
-                                        onSubmit(option);
-                                        setIsEditing(false);
-                                    }}
-                                    justifyContent="flex-start"
-                                    w="100%"
-                                >
-                                    {option}
-                                </Button>
-                            ))}
-                        </VStack>
-                    </PopoverBody>
-                </PopoverContent>
-            </Popover>
+                <EditablePreview
+                    w={getColumnWidth(type)}
+                    px={2}
+                    _hover={{
+                        background: "gray.100",
+                        cursor: "pointer"
+                    }}
+                />
+                <EditableInput px={2} w={getColumnWidth(type)}/>
+            </Editable>
         );
     }
 
@@ -524,14 +561,14 @@ const EditableCell = ({ value, onSubmit, options }) => {
             onSubmit={onSubmit}
         >
             <EditablePreview
-                w="100%"
+                w={getColumnWidth(type)}
                 px={2}
                 _hover={{
                     background: "gray.100",
                     cursor: "pointer"
                 }}
             />
-            <EditableInput px={2} />
+            <EditableInput px={2} w={getColumnWidth(type)} />
         </Editable>
     );
 };
