@@ -170,7 +170,6 @@ function App() {
                             '젖병건조대', '아기욕조', '체온계', '마사지오일'
                         ]}
                         onSubmit={(newValue) => {
-                            // 여기에 데이터 업데이트 로직 추가
                             setTableData(prev => prev.map((row, index) =>
                                 index === info.row.index ? { ...row, item: newValue } : row
                             ));
@@ -186,6 +185,9 @@ function App() {
                         type="productBrand"
                         value={info.getValue()}
                         onSubmit={(newValue) => {
+                            setTableData(prev => prev.map((row, index) =>
+                                index === info.row.index ? { ...row, productBrand: newValue } : row
+                            ));
                         }}
                     />
                 )
@@ -259,12 +261,11 @@ function App() {
                 cell: info => (
                     <EditableCell
                         type="requiredQty"
-                        value={info.getValue().toString()}
+                        value={info.getValue()}
                         onSubmit={(newValue) => {
-                            // 숫자만 허용
-                            if (!/^\d+$/.test(newValue)) {
-                                return;
-                            }
+                            setTableData(prev => prev.map((row, index) =>
+                                index === info.row.index ? { ...row, requiredQty: newValue } : row
+                            ));
                         }}
                     />
                 )
@@ -275,22 +276,15 @@ function App() {
                 cell: info => (
                     <EditableCell
                         type="purchasedQty"
-                        value={info.getValue().toString()}
+                        value={info.getValue()}
                         onSubmit={(newValue) => {
-                            // 숫자만 허용
-                            const numericValue = parseInt(newValue);
-                            if (!isNaN(numericValue)) {
-                                // 구매개수가 변경되면 비용도 자동으로 업데이트
-                                setTableData(prev => prev.map((row, index) =>
-                                    index === info.row.index
-                                        ? {
-                                            ...row,
-                                            purchasedQty: numericValue,
-                                            totalCost: row.unitPrice * numericValue
-                                        }
-                                        : row
-                                ));
-                            }
+                            setTableData(prev => prev.map((row, index) =>
+                                index === info.row.index ? {
+                                    ...row,
+                                    purchasedQty: newValue,
+                                    totalCost: row.unitPrice * newValue
+                                } : row
+                            ));
                         }}
                     />
                 )
@@ -301,25 +295,15 @@ function App() {
                 cell: info => (
                     <EditableCell
                         type="unitPrice"
-                        value={new Intl.NumberFormat('ko-KR', {
-                            style: 'currency',
-                            currency: 'KRW'
-                        }).format(info.getValue())}
+                        value={info.getValue()}
                         onSubmit={(newValue) => {
-                            // 숫자만 허용하고 쉼표 제거
-                            const numericValue = parseInt(newValue.replace(/[^0-9]/g, ''));
-                            if (!isNaN(numericValue)) {
-                                // 단가가 변경되면 비용도 자동으로 업데이트
-                                setTableData(prev => prev.map((row, index) =>
-                                    index === info.row.index
-                                        ? {
-                                            ...row,
-                                            unitPrice: numericValue,
-                                            totalCost: numericValue * row.purchasedQty
-                                        }
-                                        : row
-                                ));
-                            }
+                            setTableData(prev => prev.map((row, index) =>
+                                index === info.row.index ? {
+                                    ...row,
+                                    unitPrice: newValue,
+                                    totalCost: newValue * row.purchasedQty
+                                } : row
+                            ));
                         }}
                     />
                 )
@@ -362,6 +346,9 @@ function App() {
                         type="notes"
                         value={info.getValue()}
                         onSubmit={(newValue) => {
+                            setTableData(prev => prev.map((row, index) =>
+                                index === info.row.index ? { ...row, notes: newValue } : row
+                            ));
                         }}
                     />
                 )
@@ -374,6 +361,9 @@ function App() {
                         type="source"
                         value={info.getValue()}
                         onSubmit={(newValue) => {
+                            setTableData(prev => prev.map((row, index) =>
+                                index === info.row.index ? { ...row, source: newValue } : row
+                            ));
                         }}
                     />
                 )
