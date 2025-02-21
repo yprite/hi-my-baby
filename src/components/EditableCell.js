@@ -12,6 +12,7 @@ import {
     useDisclosure,
     useToast
 } from '@chakra-ui/react';
+import { CELL_TYPES, COLUMN_WIDTHS } from '../constants/cellTypes';
 
 export const EditableCell = ({ type, value, options, onSubmit }) => {
     const [isEditing, setIsEditing] = React.useState(false);
@@ -23,29 +24,18 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
     }, [value]);
 
     const getColumnWidth = (type) => {
-        switch (type) {
-            case "category": return "100px";
-            case "timing": return "100px";
-            case "requiredQty": return "80px";
-            case "purchasedQty": return "80px";
-            case "unitPrice": return "100px";
-            case "totalCost": return "100px";
-            case "readyStatus": return "80px";
-            case "notes": return "200px";
-            case "source": return "120px";
-            default: return "100%";
-        }
+        return COLUMN_WIDTHS[type] || "100%";
     };
 
     const formatValue = (type, value) => {
         switch (type) {
-            case "unitPrice":
+            case CELL_TYPES.UNIT_PRICE:
                 return new Intl.NumberFormat('ko-KR', {
                     style: 'currency',
                     currency: 'KRW'
                 }).format(value);
-            case "requiredQty":
-            case "purchasedQty":
+            case CELL_TYPES.REQUIRED_QTY:
+            case CELL_TYPES.PURCHASED_QTY:
                 return value.toString();
             default:
                 return value;
@@ -64,7 +54,7 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
 
     const handleSubmit = (newValue) => {
         switch (type) {
-            case "unitPrice":
+            case CELL_TYPES.UNIT_PRICE:
                 const numericValue = parseInt(newValue.replace(/[^0-9]/g, ''));
                 if (!isNaN(numericValue)) {
                     onSubmit(numericValue);
@@ -74,8 +64,8 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
                     setCurrentValue(value);
                 }
                 break;
-            case "requiredQty":
-            case "purchasedQty":
+            case CELL_TYPES.REQUIRED_QTY:
+            case CELL_TYPES.PURCHASED_QTY:
                 if (/^\d+$/.test(newValue)) {
                     onSubmit(parseInt(newValue));
                     setCurrentValue(parseInt(newValue));

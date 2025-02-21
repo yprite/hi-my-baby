@@ -55,6 +55,7 @@ import { getNextReadyStatus } from './utils/ReadystatusUtils';
 import { getNextTimingStatus } from './utils/TimingStatusUtils';
 import { TableComponent } from './components/TableComponent';
 import FilterComponent from './components/FilterComponent';
+import { CELL_TYPES } from './constants/cellTypes';
 
 function App() {
 
@@ -291,10 +292,10 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('단가', <LucideIcon icon={Calculator} />),
-                accessorKey: 'unitPrice',
+                accessorKey: CELL_TYPES.UNIT_PRICE,
                 cell: info => (
                     <EditableCell
-                        type="unitPrice"
+                        type={CELL_TYPES.UNIT_PRICE}
                         value={info.getValue()}
                         onSubmit={(newValue) => {
                             setTableData(prev => prev.map((row, index) =>
