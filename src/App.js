@@ -35,7 +35,8 @@ import {
     PopoverBody,
     VStack,
     useDisclosure,
-    Text
+    Text,
+    Input
 } from '@chakra-ui/react';
 import {
     CheckIcon,
@@ -286,6 +287,19 @@ function App() {
         </HStack>
     );
 
+    // 이미지 업로드 핸들러
+    const handleImageUpload = (rowIndex, file) => {
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setTableData(prev => prev.map((row, index) =>
+                    index === rowIndex ? { ...row, image: reader.result } : row
+                ));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     // 컬럼 정의 수정
     const columns = React.useMemo(
         () => [
@@ -513,14 +527,42 @@ function App() {
             {
                 header: ({ column }) => renderHeader('참고사진', <LucideIcon icon={LucideImage} />),
                 accessorKey: 'image',
-                cell: info => info.getValue() ? (
-                    <ChakraImage
-                        src={info.getValue()}
-                        alt="제품 이미지"
-                        boxSize="50px"
-                        objectFit="cover"
-                    />
-                ) : '없음'
+                cell: info => (
+                    <Box position="relative" w="50px" h="50px">
+                        <Input
+                            type="file"
+                            accept="image/*"
+                            position="absolute"
+                            top="0"
+                            left="0"
+                            opacity="0"
+                            w="100%"
+                            h="100%"
+                            cursor="pointer"
+                            onChange={(e) => handleImageUpload(info.row.index, e.target.files[0])}
+                        />
+                        {info.getValue() ? (
+                            <ChakraImage
+                                src={info.getValue()}
+                                alt="제품 이미지"
+                                boxSize="50px"
+                                objectFit="cover"
+                                borderRadius="md"
+                            />
+                        ) : (
+                            <Button
+                                w="100%"
+                                h="100%"
+                                variant="outline"
+                                colorScheme="gray"
+                                fontSize="sm"
+                                p={0}
+                            >
+                                <LucideIcon icon={LucideImage} size={16} />
+                            </Button>
+                        )}
+                    </Box>
+                )
             },
         ],
         [filters, toggleFilter]
