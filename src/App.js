@@ -67,6 +67,45 @@ import {
     Image as LucideImage,
     ShoppingBasket,  // Lucide의 Image 아이콘
 } from 'lucide-react';
+import Color from 'color';
+
+// Chakra UI의 기본 컬러 스킴 정의
+const CHAKRA_COLOR_SCHEMES = {
+    red: '#E53E3E',
+    orange: '#DD6B20',
+    yellow: '#D69E2E',
+    green: '#38A169',
+    teal: '#319795',
+    blue: '#3182CE',
+    cyan: '#00B5D8',
+    purple: '#805AD5',
+    pink: '#D53F8C',
+    gray: '#718096'
+};
+
+// 분류별 색상 매핑
+const CATEGORY_COLORS = {
+    '침구류': 'blue',
+    '아기 의류': 'green',
+    '수유용품': 'purple',
+    '아기 피부용품': 'pink',
+    '아기 위생용품': 'teal',
+    '아기 세제': 'cyan',
+    '기저귀': 'orange',
+    '외출용품': 'yellow',
+    '놀이용품': 'red',
+    '가전/가구': 'gray',
+    '산모용품': 'purple',
+    '상비약': 'red',
+    '기타': 'gray'
+};
+
+// 분류 옵션
+const CATEGORIES = [
+    '침구류', '아기 의류', '수유용품', '기타', '아기 피부용품',
+    '아기 위생용품', '아기 세제', '기저귀', '외출용품', '놀이용품',
+    '가전/가구', '산모용품', '상비약'
+];
 
 // 준비 상태 정의
 const READY_STATUS = {
@@ -77,9 +116,9 @@ const READY_STATUS = {
 
 // 준비 상태별 색상 정의
 const READY_STATUS_COLORS = {
-    [READY_STATUS.READY]: 'gray',
-    [READY_STATUS.IN_PROGRESS]: 'blue',
-    [READY_STATUS.COMPLETED]: 'green'
+    [READY_STATUS.READY]: '#708090',
+    [READY_STATUS.IN_PROGRESS]: '#1e90ff',
+    [READY_STATUS.COMPLETED]: '#32cd32'
 };
 
 // 준비 시기 정의
@@ -129,30 +168,27 @@ const LucideIcon = ({ icon: Icon, ...props }) => (
     />
 );
 
-function App() {
-    // 분류별 색상 매핑
-    const categoryColors = {
-        '침구류': 'blue',
-        '아기 의류': 'green',
-        '수유용품': 'purple',
-        '아기 피부용품': 'pink',
-        '아기 위생용품': 'teal',
-        '아기 세제': 'cyan',
-        '기저귀': 'orange',
-        '외출용품': 'yellow',
-        '놀이용품': 'red',
-        '가전/가구': 'gray',
-        '산모용품': 'purple',
-        '상비약': 'red',
-        '기타': 'gray'
-    };
+// HEX 컬러 팔레트 값을 받아서 가장 비슷한 Chakra UI 컬러 스킴으로 변환
+const getChakraColorScheme = (hexColor) => {
+    const color = Color(hexColor);
+    const [h, s, l] = color.hsl().array();
 
-    // 분류 옵션
-    const categories = [
-        '침구류', '아기 의류', '수유용품', '기타', '아기 피부용품',
-        '아기 위생용품', '아기 세제', '기저귀', '외출용품', '놀이용품',
-        '가전/가구', '산모용품', '상비약'
-    ];
+    const closestColor = Object.entries(CHAKRA_COLOR_SCHEMES).reduce((prev, [scheme, hex]) => {
+        const compareColor = Color(hex);
+        const [ch, cs, cl] = compareColor.hsl().array();
+        
+        // HSL 색상 공간에서의 거리 계산
+        const distance = Math.sqrt(
+            Math.pow(h - ch, 2) + 
+            Math.pow(s - cs, 2) + 
+            Math.pow(l - cl, 2)
+        );
+        return distance < prev.distance ? { scheme, distance } : prev;
+    }, { scheme: 'gray', distance: Infinity }).scheme;
+    return closestColor;
+};
+
+function App() {
 
     // 샘플 데이터 수정
     const data = React.useMemo(
@@ -161,7 +197,7 @@ function App() {
                 item: '젖병',                    // 항목 (품목)
                 productBrand: 'Dr.Browns 내추럴플로우 젖병 (닥터브라운)',  // 제품명(브랜드)
                 category: '수유용품',
-                timing: '산전',
+                timing: READY_TIMING.EARLY,
                 requiredQty: 3,
                 purchasedQty: 2,
                 unitPrice: 15000,
@@ -175,7 +211,7 @@ function App() {
                 item: '속싸개',                  // 항목 (품목)
                 productBrand: '마더스베이비 신생아 속싸개 (마더스베이비)',  // 제품명(브랜드)
                 category: '아기 의류',
-                timing: '산전',
+                timing: READY_TIMING.EARLY,
                 requiredQty: 5,
                 purchasedQty: 3,
                 unitPrice: 12000,
@@ -297,7 +333,7 @@ function App() {
                                 <Button
                                     size="sm"
                                     variant="solid"
-                                    colorScheme={info.getValue() ? categoryColors[info.getValue()] : 'gray'}
+                                    colorScheme={info.getValue() ? CATEGORY_COLORS[info.getValue()] : 'gray'}
                                     w="100%"
                                     onClick={onOpen}
                                 >
@@ -307,12 +343,12 @@ function App() {
                             <PopoverContent w="auto">
                                 <PopoverBody p={2}>
                                     <VStack align="stretch" spacing={1}>
-                                        {categories.map(category => (
+                                        {CATEGORIES.map(category => (
                                             <Button
                                                 key={category}
                                                 size="sm"
                                                 variant="ghost"
-                                                colorScheme={categoryColors[category]}
+                                                colorScheme={CATEGORY_COLORS[category]}
                                                 onClick={() => {
                                                     handleCategoryChange(info.row.index, category);
                                                     onClose(); // Popover를 닫습니다
@@ -333,11 +369,12 @@ function App() {
             {
                 header: ({ column }) => renderHeader('준비시기', <LucideIcon icon={Calendar} />),
                 accessorKey: 'timing',
-                cell: info => (
+                cell: info => 
+                    (
                     <Button
                         size="sm"
                         variant="solid"
-                        // colorScheme={READY_TIMING_COLORS[info.getValue()]}
+                        colorScheme={'red'}
                         style={{ backgroundColor: READY_TIMING_COLORS[info.getValue()] }}
                         onClick={() => handleReadyTimingChange(info.row.index, info.getValue())}
                         w="100px"
@@ -439,6 +476,7 @@ function App() {
                         size="sm"
                         variant="solid"
                         colorScheme={READY_STATUS_COLORS[info.getValue()]}
+                        style={{ backgroundColor: READY_STATUS_COLORS[info.getValue()] }}
                         onClick={() => handleReadyStatusChange(info.row.index, info.getValue())}
                         w="100px"
                         h="30px"
@@ -446,7 +484,7 @@ function App() {
                     >
                         {info.getValue()}
                     </Button>
-                ),
+                )
             },
             {
                 header: ({ column }) => renderHeader('내용', <LucideIcon icon={HelpCircle} />),
@@ -507,7 +545,7 @@ function App() {
                                 <Tr key={headerGroup.id}>
                                     {headerGroup.headers.map(header => {
                                         // 분류, 준비시기, 준비완료 컬럼에 대해서만 필터 기능 추가
-                                        if (['분류', '준비시기', '준비완료'].includes(header.column.columnDef.header)) {
+                                        if (['category', 'timing', 'readyStatus'].includes(header.column.columnDef.accessorKey)) {
                                             const { isOpen, onOpen, onClose } = useDisclosure();
                                             return (
                                                 <Th key={header.id} p={2}>
@@ -519,20 +557,20 @@ function App() {
                                                                 onClick={onOpen}
                                                                 rightIcon={filters[header.column.id].length ? <CheckIcon /> : undefined}
                                                             >
-                                                                {header.column.columnDef.header}
-                                                                {filters[header.column.id].length ? ` (${filters[header.column.id].length})` : ''}
+                                                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                                                {filters[header.column.columnDef.accessorKey].length ? ` (${filters[header.column.columnDef.accessorKey].length})` : ''}
                                                             </Button>
                                                         </PopoverTrigger>
                                                         <PopoverContent w="auto">
                                                             <PopoverBody p={2}>
                                                                 <VStack align="stretch" spacing={1}>
-                                                                    {header.column.columnDef.header === '분류' && 
-                                                                        categories.map(category => (
+                                                                    {header.column.columnDef.accessorKey === 'category' &&
+                                                                        CATEGORIES.map(category => (
                                                                             <Button
                                                                                 key={category}
                                                                                 size="sm"
                                                                                 variant={filters.category.includes(category) ? "solid" : "ghost"}
-                                                                                colorScheme={categoryColors[category]}
+                                                                                colorScheme={CATEGORY_COLORS[category]}
                                                                                 onClick={() => toggleFilter('category', category)}
                                                                                 justifyContent="flex-start"
                                                                             >
@@ -540,17 +578,13 @@ function App() {
                                                                             </Button>
                                                                         ))
                                                                     }
-                                                                    {header.column.columnDef.header === '준비시기' && 
+                                                                    {header.column.columnDef.accessorKey === 'timing' &&
                                                                         Object.values(READY_TIMING).map(timing => (
                                                                             <Button
                                                                                 key={timing}
                                                                                 size="sm"
                                                                                 variant={filters.timing.includes(timing) ? "solid" : "ghost"}
-                                                                                style={{
-                                                                                    backgroundColor: filters.timing.includes(timing) 
-                                                                                        ? READY_TIMING_COLORS[timing] 
-                                                                                        : 'transparent'
-                                                                                }}
+                                                                                colorScheme={getChakraColorScheme(READY_TIMING_COLORS[timing])}
                                                                                 onClick={() => toggleFilter('timing', timing)}
                                                                                 justifyContent="flex-start"
                                                                             >
@@ -558,13 +592,18 @@ function App() {
                                                                             </Button>
                                                                         ))
                                                                     }
-                                                                    {header.column.columnDef.header === '준비완료' && 
+                                                                    {header.column.columnDef.accessorKey === 'readyStatus' &&
                                                                         Object.values(READY_STATUS).map(status => (
                                                                             <Button
                                                                                 key={status}
                                                                                 size="sm"
                                                                                 variant={filters.readyStatus.includes(status) ? "solid" : "ghost"}
                                                                                 colorScheme={READY_STATUS_COLORS[status]}
+                                                                                style={{
+                                                                                    backgroundColor: filters.readyStatus.includes(status)
+                                                                                        ? READY_STATUS_COLORS[status]
+                                                                                        : 'transparent'
+                                                                                }}
                                                                                 onClick={() => toggleFilter('readyStatus', status)}
                                                                                 justifyContent="flex-start"
                                                                             >
@@ -692,7 +731,7 @@ const EditableCell = ({ value, type, onSubmit, options }) => {
     // }
 
     const getColumnWidth = (type) => {
-        switch(type) {
+        switch (type) {
             case "category": return "100px";
             case "timing": return "100px";
             case "requiredQty": return "80px";
@@ -723,7 +762,7 @@ const EditableCell = ({ value, type, onSubmit, options }) => {
                         cursor: "pointer"
                     }}
                 />
-                <EditableInput px={2} w={getColumnWidth(type)}/>
+                <EditableInput px={2} w={getColumnWidth(type)} />
             </Editable>
         );
     }
