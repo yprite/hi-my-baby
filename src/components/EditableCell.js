@@ -28,17 +28,19 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
     };
 
     const formatValue = (type, value) => {
+        if (isEditing) return value;  // 편집 중에는 포맷팅하지 않음
+
         switch (type) {
             case CELL_TYPES.UNIT_PRICE:
-                return new Intl.NumberFormat('ko-KR', {
+                return value ? new Intl.NumberFormat('ko-KR', {
                     style: 'currency',
                     currency: 'KRW'
-                }).format(value);
+                }).format(value) : '₩0';
             case CELL_TYPES.REQUIRED_QTY:
             case CELL_TYPES.PURCHASED_QTY:
-                return value.toString();
+                return value?.toString() || '0';
             default:
-                return value;
+                return value || '';
         }
     };
 
@@ -53,25 +55,24 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
     };
 
     const handleSubmit = (newValue) => {
+        setIsEditing(false);  // 제출 시 편집 모드 종료
+        
         switch (type) {
             case CELL_TYPES.UNIT_PRICE:
-                const numericValue = parseInt(newValue.replace(/[^0-9]/g, ''));
-                if (!isNaN(numericValue)) {
-                    onSubmit(numericValue);
-                    setCurrentValue(numericValue);
-                } else {
-                    showErrorToast();
-                    setCurrentValue(value);
-                }
+                const cleanValue = newValue.replace(/[^0-9]/g, '');
+                const numericValue = cleanValue ? parseInt(cleanValue) : 0;
+                onSubmit(numericValue);
+                setCurrentValue(numericValue);
                 break;
             case CELL_TYPES.REQUIRED_QTY:
             case CELL_TYPES.PURCHASED_QTY:
                 if (/^\d+$/.test(newValue)) {
-                    onSubmit(parseInt(newValue));
-                    setCurrentValue(parseInt(newValue));
+                    const intValue = parseInt(newValue);
+                    onSubmit(intValue);
+                    setCurrentValue(intValue);
                 } else {
                     showErrorToast();
-                    setCurrentValue(value);
+                    setCurrentValue(value || 0);
                 }
                 break;
             default:
@@ -125,6 +126,7 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
     return (
         <Editable
             value={formatValue(type, currentValue)}
+            onEdit={() => setIsEditing(true)}
             isPreviewFocusable={true}
             submitOnBlur={true}
             onSubmit={handleSubmit}
