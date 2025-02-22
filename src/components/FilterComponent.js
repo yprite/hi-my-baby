@@ -24,7 +24,7 @@ import {
     READY_TIMING,
     READY_TIMING_COLORS,
 } from '../constants/readyTimingConstants';
-import { getChakraColorScheme } from '../utils/colorUtils';
+import { getChakraColorScheme } from '../utils';
 
 
 const FilterComponent = ({ header, filters, toggleFilter }) => {
