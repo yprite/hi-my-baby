@@ -74,7 +74,7 @@ function App() {
                 readyStatus: READY_STATUS.READY,  // 초기값을 '준비 전'으로 설정
                 notes: '신생아용 160ml',
                 source: '쿠팡',
-                image: 'url_to_image'
+                image: ''  // 빈 문자열로 수정
             },
             {
                 item: '속싸개',                  // 항목 (품목)
@@ -88,7 +88,7 @@ function App() {
                 readyStatus: READY_STATUS.READY,  // 초기값을 '준비 전'으로 설정
                 notes: '신생아용 3개세트',
                 source: '마켓컬리',
-                image: 'url_to_image'
+                image: ''  // 빈 문자열로 수정
             },
         ],
         []
