@@ -54,8 +54,8 @@ import { READY_TIMING, READY_TIMING_COLORS } from './context/ReadyTimingConstant
 import { getNextReadyStatus } from './utils/ReadystatusUtils';
 import { getNextTimingStatus } from './utils/TimingStatusUtils';
 import { TableComponent } from './components/TableComponent';
-import FilterComponent from './components/FilterComponent';
 import { CELL_TYPES } from './constants/cellTypes';
+
 
 function App() {
 
@@ -160,10 +160,10 @@ function App() {
         () => [
             {
                 header: ({ column }) => renderHeader('항목', <LucideIcon icon={ShoppingBasket} />),
-                accessorKey: 'item',
+                accessorKey: CELL_TYPES.ITEM,
                 cell: info => (
                     <EditableCell
-                        type="item"
+                        type={CELL_TYPES.ITEM}
                         value={info.getValue()}
                         options={[
                             '젖병', '속싸개', '손수건', '기저귀', '물티슈',
@@ -180,10 +180,10 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('제품명/브랜드', <LucideIcon icon={Star} />),
-                accessorKey: 'productBrand',
+                accessorKey: CELL_TYPES.PRODUCT_BRAND,
                 cell: info => (
                     <EditableCell
-                        type="productBrand"
+                        type={CELL_TYPES.PRODUCT_BRAND}
                         value={info.getValue()}
                         onSubmit={(newValue) => {
                             setTableData(prev => prev.map((row, index) =>
@@ -195,7 +195,7 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('분류', <LucideIcon icon={Settings} />),
-                accessorKey: 'category',
+                accessorKey: CELL_TYPES.CATEGORY,
                 cell: info => {
                     const { isOpen, onOpen, onClose } = useDisclosure();
                     return (
@@ -239,7 +239,7 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('준비시기', <LucideIcon icon={Calendar} />),
-                accessorKey: 'timing',
+                accessorKey: CELL_TYPES.TIMING,
                 cell: info =>
                 (
                     <Button
@@ -258,10 +258,10 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('필요개수', <LucideIcon icon={PlusSquare} />),
-                accessorKey: 'requiredQty',
+                accessorKey: CELL_TYPES.REQUIRED_QTY,
                 cell: info => (
                     <EditableCell
-                        type="requiredQty"
+                        type={CELL_TYPES.REQUIRED_QTY}
                         value={info.getValue()}
                         onSubmit={(newValue) => {
                             setTableData(prev => prev.map((row, index) =>
@@ -273,10 +273,10 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('구매개수', <LucideIcon icon={Repeat} />),
-                accessorKey: 'purchasedQty',
+                accessorKey: CELL_TYPES.PURCHASED_QTY,
                 cell: info => (
                     <EditableCell
-                        type="purchasedQty"
+                        type={CELL_TYPES.PURCHASED_QTY}
                         value={info.getValue()}
                         onSubmit={(newValue) => {
                             setTableData(prev => prev.map((row, index) =>
@@ -311,7 +311,7 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('비용', <LucideIcon icon={DollarSign} />),
-                accessorKey: 'totalCost',
+                accessorKey: CELL_TYPES.TOTAL_COST,
                 cell: info => (
                     <Box px={2}>
                         {new Intl.NumberFormat('ko-KR', {
@@ -323,7 +323,7 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('준비완료', <LucideIcon icon={CheckCircle} />),
-                accessorKey: 'readyStatus',
+                accessorKey: CELL_TYPES.READY_STATUS,
                 cell: info => (
                     <Button
                         size="sm"
@@ -341,10 +341,10 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('내용', <LucideIcon icon={HelpCircle} />),
-                accessorKey: 'notes',
+                accessorKey: CELL_TYPES.NOTES,
                 cell: info => (
                     <EditableCell
-                        type="notes"
+                        type={CELL_TYPES.NOTES}
                         value={info.getValue()}
                         onSubmit={(newValue) => {
                             setTableData(prev => prev.map((row, index) =>
@@ -356,10 +356,10 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('준비/구입경로', <LucideIcon icon={Store} />),
-                accessorKey: 'source',
+                accessorKey: CELL_TYPES.SOURCE,
                 cell: info => (
                     <EditableCell
-                        type="source"
+                        type={CELL_TYPES.SOURCE}
                         value={info.getValue()}
                         onSubmit={(newValue) => {
                             setTableData(prev => prev.map((row, index) =>
@@ -371,7 +371,7 @@ function App() {
             },
             {
                 header: ({ column }) => renderHeader('참고사진', <LucideIcon icon={LucideImage} />),
-                accessorKey: 'image',
+                accessorKey: CELL_TYPES.IMAGE,
                 cell: info => (
                     <ImageUploader
                         rowIndex={info.row.index}

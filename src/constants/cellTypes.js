@@ -1,9 +1,16 @@
 export const CELL_TYPES = {
-    UNIT_PRICE: 'unitPrice',
+    ITEM: 'item',
+    PRODUCT_BRAND: 'productBrand',
+    CATEGORY: 'category',
+    TIMING: 'timing',
     REQUIRED_QTY: 'requiredQty',
+    UNIT_PRICE: 'unitPrice',
     PURCHASED_QTY: 'purchasedQty',
+    TOTAL_COST: 'totalCost',
+    READY_STATUS: 'readyStatus',
     NOTES: 'notes',
-    SOURCE: 'source'
+    SOURCE: 'source',
+    IMAGE: 'image'
 };
 
 export const COLUMN_WIDTHS = {
