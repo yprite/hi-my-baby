@@ -10,14 +10,17 @@ import {
     PopoverBody,
     VStack,
     useDisclosure,
-    useToast
 } from '@chakra-ui/react';
 import { CELL_TYPES, COLUMN_WIDTHS } from '../constants/cellTypes';
+import {
+    showToastError,
+    ERROR_TYPES,
+    validateNumericInput
+} from '../utils/errorHandlers';
 
 export const EditableCell = ({ type, value, options, onSubmit }) => {
     const [isEditing, setIsEditing] = React.useState(false);
     const [currentValue, setCurrentValue] = React.useState(value);
-    const toast = useToast();
 
     React.useEffect(() => {
         setCurrentValue(value);
@@ -28,7 +31,7 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
     };
 
     const formatValue = (type, value) => {
-        if (isEditing) return value;  // 편집 중에는 포맷팅하지 않음
+        if (isEditing) return value;
 
         switch (type) {
             case CELL_TYPES.UNIT_PRICE:
@@ -44,40 +47,40 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
         }
     };
 
-    const showErrorToast = (message = "숫자만 입력 가능합니다.") => {
-        toast({
-            title: "입력 오류",
-            description: message,
-            status: "error",
-            duration: 2000,
-            isClosable: true,
-        });
-    };
-
     const handleSubmit = (newValue) => {
-        setIsEditing(false);  // 제출 시 편집 모드 종료
-        
+        setIsEditing(false);
+
         switch (type) {
             case CELL_TYPES.UNIT_PRICE:
                 const cleanValue = newValue.replace(/[^0-9]/g, '');
                 const numericValue = cleanValue ? parseInt(cleanValue) : 0;
-                onSubmit(numericValue);
-                setCurrentValue(numericValue);
+                if (validateNumericInput(cleanValue)) {
+                    onSubmit(numericValue);
+                    setCurrentValue(numericValue);
+                } else {
+                    showToastError(ERROR_TYPES.NUMERIC);
+                    setCurrentValue(value || 0);
+                }
                 break;
             case CELL_TYPES.REQUIRED_QTY:
             case CELL_TYPES.PURCHASED_QTY:
-                if (/^\d+$/.test(newValue)) {
+                if (validateNumericInput(newValue)) {
                     const intValue = parseInt(newValue);
                     onSubmit(intValue);
                     setCurrentValue(intValue);
                 } else {
-                    showErrorToast();
+                    showToastError(ERROR_TYPES.NUMERIC);
                     setCurrentValue(value || 0);
                 }
                 break;
             default:
-                onSubmit(newValue);
-                setCurrentValue(newValue);
+                if (newValue.trim() === '' && type === 'item') {
+                    showToastError(ERROR_TYPES.REQUIRED);
+                    setCurrentValue(value);
+                } else {
+                    onSubmit(newValue);
+                    setCurrentValue(newValue);
+                }
         }
     };
 
@@ -122,7 +125,6 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
         );
     }
 
-    // 일반 입력 필드로 표시
     return (
         <Editable
             value={formatValue(type, currentValue)}
@@ -143,4 +145,4 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
             <EditableInput px={2} w={getColumnWidth(type)} />
         </Editable>
     );
-};
+};1
