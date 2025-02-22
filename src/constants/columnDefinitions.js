@@ -127,7 +127,7 @@ export const getColumnDefinitions = ({
                 h="30px"
                 fontSize="sm"
             >
-                {info.getValue()}
+                {info.getValue() || '선택하세요'}
             </Button>
         )
     },
@@ -210,7 +210,7 @@ export const getColumnDefinitions = ({
                 h="30px"
                 fontSize="sm"
             >
-                {info.getValue()}
+                {info.getValue() || '선택하세요'}
             </Button>
         )
     },

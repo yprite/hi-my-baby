@@ -43,7 +43,7 @@ export const EditableCell = ({ type, value, options, onSubmit }) => {
             case CELL_TYPES.PURCHASED_QTY:
                 return value?.toString() || '0';
             default:
-                return value || '';
+                return value || '입력하세요';
         }
     };
 
