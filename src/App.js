@@ -48,13 +48,13 @@ import { LucideIcon } from './components/LucideIcon';
 import { EditableCell } from './components/EditableCell';
 import { ImageUploader } from './components/ImageUploader';
 
-import { CATEGORY_COLORS, CATEGORIES } from './context/CategoryConstants';
-import { READY_STATUS, READY_STATUS_COLORS } from './context/ReadyStatusConstants';
-import { READY_TIMING, READY_TIMING_COLORS } from './context/ReadyTimingConstants';
+import { CATEGORY_COLORS, CATEGORIES } from './constants/categoryConstants';
+import { READY_STATUS, READY_STATUS_COLORS } from './constants/readyStatusConstants';
+import { READY_TIMING, READY_TIMING_COLORS } from './constants/readyTimingConstants';
 import { getNextReadyStatus } from './utils/ReadystatusUtils';
 import { getNextTimingStatus } from './utils/TimingStatusUtils';
 import { TableComponent } from './components/TableComponent';
-import { CELL_TYPES } from './constants/cellTypes';
+import { CELL_TYPES, CELL_TYPES_KOREAN } from './constants/cellTypes';
 
 
 function App() {
@@ -159,17 +159,13 @@ function App() {
     const columns = React.useMemo(
         () => [
             {
-                header: ({ column }) => renderHeader('항목', <LucideIcon icon={ShoppingBasket} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.ITEM, <LucideIcon icon={ShoppingBasket} />),
                 accessorKey: CELL_TYPES.ITEM,
                 cell: info => (
                     <EditableCell
                         type={CELL_TYPES.ITEM}
                         value={info.getValue()}
-                        options={[
-                            '젖병', '속싸개', '손수건', '기저귀', '물티슈',
-                            '수유등', '아기침대', '카시트', '유모차', '젖병소독기',
-                            '젖병건조대', '아기욕조', '체온계', '마사지오일'
-                        ]}
+                        options={CATEGORIES}
                         onSubmit={(newValue) => {
                             setTableData(prev => prev.map((row, index) =>
                                 index === info.row.index ? { ...row, item: newValue } : row
@@ -179,7 +175,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('제품명/브랜드', <LucideIcon icon={Star} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.PRODUCT_BRAND, <LucideIcon icon={Star} />),
                 accessorKey: CELL_TYPES.PRODUCT_BRAND,
                 cell: info => (
                     <EditableCell
@@ -194,7 +190,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('분류', <LucideIcon icon={Settings} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.CATEGORY, <LucideIcon icon={Settings} />),
                 accessorKey: CELL_TYPES.CATEGORY,
                 cell: info => {
                     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -238,7 +234,7 @@ function App() {
                 }
             },
             {
-                header: ({ column }) => renderHeader('준비시기', <LucideIcon icon={Calendar} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.TIMING, <LucideIcon icon={Calendar} />),
                 accessorKey: CELL_TYPES.TIMING,
                 cell: info =>
                 (
@@ -257,7 +253,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('필요개수', <LucideIcon icon={PlusSquare} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.REQUIRED_QTY, <LucideIcon icon={PlusSquare} />),
                 accessorKey: CELL_TYPES.REQUIRED_QTY,
                 cell: info => (
                     <EditableCell
@@ -272,7 +268,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('구매개수', <LucideIcon icon={Repeat} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.PURCHASED_QTY, <LucideIcon icon={Repeat} />),
                 accessorKey: CELL_TYPES.PURCHASED_QTY,
                 cell: info => (
                     <EditableCell
@@ -291,7 +287,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('단가', <LucideIcon icon={Calculator} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.UNIT_PRICE, <LucideIcon icon={Calculator} />),
                 accessorKey: CELL_TYPES.UNIT_PRICE,
                 cell: info => (
                     <EditableCell
@@ -310,7 +306,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('비용', <LucideIcon icon={DollarSign} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.TOTAL_COST, <LucideIcon icon={DollarSign} />),
                 accessorKey: CELL_TYPES.TOTAL_COST,
                 cell: info => (
                     <Box px={2}>
@@ -322,7 +318,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('준비완료', <LucideIcon icon={CheckCircle} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.READY_STATUS, <LucideIcon icon={CheckCircle} />),
                 accessorKey: CELL_TYPES.READY_STATUS,
                 cell: info => (
                     <Button
@@ -340,7 +336,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('내용', <LucideIcon icon={HelpCircle} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.NOTES, <LucideIcon icon={HelpCircle} />),
                 accessorKey: CELL_TYPES.NOTES,
                 cell: info => (
                     <EditableCell
@@ -355,7 +351,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('준비/구입경로', <LucideIcon icon={Store} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.SOURCE, <LucideIcon icon={Store} />),
                 accessorKey: CELL_TYPES.SOURCE,
                 cell: info => (
                     <EditableCell
@@ -370,7 +366,7 @@ function App() {
                 )
             },
             {
-                header: ({ column }) => renderHeader('참고사진', <LucideIcon icon={LucideImage} />),
+                header: ({ column }) => renderHeader(CELL_TYPES_KOREAN.IMAGE, <LucideIcon icon={LucideImage} />),
                 accessorKey: CELL_TYPES.IMAGE,
                 cell: info => (
                     <ImageUploader

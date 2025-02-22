@@ -1,5 +1,5 @@
 import React from 'react';
-import { READY_TIMING, READY_TIMING_COLORS } from '../context/ReadyTimingConstants';
+import { READY_TIMING, READY_TIMING_COLORS } from '../constants/readyTimingConstants';
 
 
 // 다음 시기로 변경하는 함수

@@ -21,15 +21,15 @@ import {
 import {
     CATEGORY_COLORS,
     CATEGORIES,
-} from '../context/CategoryConstants';
+} from '../constants/categoryConstants';
 import {
     READY_STATUS,
     READY_STATUS_COLORS,
-} from '../context/ReadyStatusConstants';
+} from '../constants/readyStatusConstants';
 import {
     READY_TIMING,
     READY_TIMING_COLORS,
-} from '../context/ReadyTimingConstants';
+} from '../constants/readyTimingConstants';
 import { getChakraColorScheme } from '../utils/colorUtils';
 import { LucideIcon } from './LucideIcon';
 import {

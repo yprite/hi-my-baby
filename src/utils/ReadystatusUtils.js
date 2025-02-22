@@ -1,5 +1,5 @@
 import React from 'react';
-import { READY_STATUS, READY_STATUS_COLORS } from '../context/ReadyStatusConstants';
+import { READY_STATUS, READY_STATUS_COLORS } from '../constants/readyStatusConstants';
 
 // 다음 상태로 변경하는 함수
 export const getNextReadyStatus = (currentStatus) => {

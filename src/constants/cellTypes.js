@@ -13,6 +13,21 @@ export const CELL_TYPES = {
     IMAGE: 'image'
 };
 
+export const CELL_TYPES_KOREAN = {
+    ITEM: '품목',
+    PRODUCT_BRAND: '제품명/브랜드',
+    CATEGORY: '분류',
+    TIMING: '준비시기',
+    REQUIRED_QTY: '필요개수',
+    PURCHASED_QTY: '구매개수',
+    UNIT_PRICE: '단가',
+    TOTAL_COST: '비용',
+    READY_STATUS: '준비완료',
+    NOTES: '내용',
+    SOURCE: '준비/구입경로',
+    IMAGE: '이미지'
+};
+
 export const COLUMN_WIDTHS = {
     category: "100px",
     timing: "100px",
@@ -23,4 +38,4 @@ export const COLUMN_WIDTHS = {
     readyStatus: "80px",
     notes: "200px",
     source: "120px"
-}; 
+};
