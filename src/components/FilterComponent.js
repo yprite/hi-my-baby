@@ -24,6 +24,8 @@ import {
     READY_TIMING,
     READY_TIMING_COLORS,
 } from '../context/ReadyTimingConstants';
+import { getChakraColorScheme } from '../utils/colorUtils';
+
 
 const FilterComponent = ({ header, filters, toggleFilter }) => {
     const accessorKey = header.column.columnDef.accessorKey;
@@ -68,7 +70,7 @@ const FilterComponent = ({ header, filters, toggleFilter }) => {
                                             key={timing}
                                             size="sm"
                                             variant={filters.timing?.includes(timing) ? "solid" : "ghost"}
-                                            colorScheme="blue"
+                                            colorScheme={getChakraColorScheme(READY_TIMING_COLORS[timing])}
                                             style={{
                                                 backgroundColor: filters.timing?.includes(timing)
                                                     ? READY_TIMING_COLORS[timing]
@@ -87,7 +89,7 @@ const FilterComponent = ({ header, filters, toggleFilter }) => {
                                             key={status}
                                             size="sm"
                                             variant={filters.readyStatus?.includes(status) ? "solid" : "ghost"}
-                                            colorScheme="blue"
+                                            colorScheme={getChakraColorScheme(READY_STATUS_COLORS[status])}
                                             style={{
                                                 backgroundColor: filters.readyStatus?.includes(status)
                                                     ? READY_STATUS_COLORS[status]
