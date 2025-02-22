@@ -26,36 +26,13 @@ import {
     Tbody,
     Td
 } from '@chakra-ui/react';
-import { flexRender } from '@tanstack/react-table';
 
-import {
-    Info,
-    Star,
-    Settings,
-    Calendar,
-    PlusSquare,
-    Repeat,
-    Calculator,  // 단가용
-    DollarSign,  // 비용용
-    CheckCircle,
-    HelpCircle,
-    Store,       // 구입경로용
-    Image as LucideImage,
-    ShoppingBasket,  // Lucide의 Image 아이콘
-} from 'lucide-react';
-
-import { LucideIcon } from './components/LucideIcon';
-import { EditableCell } from './components/EditableCell';
-import { ImageUploader } from './components/ImageUploader';
-
-import { CATEGORY_COLORS, CATEGORIES } from './constants/categoryConstants';
 import { READY_STATUS, READY_STATUS_COLORS } from './constants/readyStatusConstants';
 import { READY_TIMING, READY_TIMING_COLORS } from './constants/readyTimingConstants';
-import { getNextReadyStatus } from './utils/ReadystatusUtils';
-import { getNextTimingStatus } from './utils/TimingStatusUtils';
 import { TableComponent } from './components/TableComponent';
-import { CELL_TYPES, CELL_TYPES_KOREAN } from './constants/cellTypes';
+
 import { getColumnDefinitions } from './constants/columnDefinitions';
+import { useTableHandlers } from './hooks/useTableHandlers';
 
 
 function App() {
@@ -95,8 +72,14 @@ function App() {
         []
     );
 
-    // 데이터 상태 관리 추가
-    const [tableData, setTableData] = React.useState(data);
+    const {
+        tableData,
+        setTableData,
+        handleReadyStatusChange,
+        handleReadyTimingChange,
+        handleCategoryChange,
+        addNewRow
+    } = useTableHandlers(data);
 
     // 필터 상태 추가
     const [filters, setFilters] = React.useState({
@@ -114,29 +97,6 @@ function App() {
             return categoryMatch && timingMatch && readyStatusMatch;
         });
     }, [tableData, filters]);
-
-    // 준비 상태 변경 함수
-    const handleReadyStatusChange = (rowIndex, currentStatus) => {
-        const nextStatus = getNextReadyStatus(currentStatus);
-        setTableData(prev => prev.map((row, index) =>
-            index === rowIndex ? { ...row, readyStatus: nextStatus } : row
-        ));
-    };
-
-    // 준비 상태 변경 함수
-    const handleReadyTimingChange = (rowIndex, currentTiming) => {
-        const nextTiming = getNextTimingStatus(currentTiming);
-        setTableData(prev => prev.map((row, index) =>
-            index === rowIndex ? { ...row, timing: nextTiming } : row
-        ));
-    };
-
-    // 카테고리 선택 핸들러 추가
-    const handleCategoryChange = (rowIndex, newCategory) => {
-        setTableData(prev => prev.map((row, index) =>
-            index === rowIndex ? { ...row, category: newCategory } : row
-        ));
-    };
 
     // 필터 토글 함수
     const toggleFilter = (type, value) => {
@@ -174,25 +134,6 @@ function App() {
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
     });
-
-    // 새 행 추가 함수
-    const addNewRow = () => {
-        const newRow = {
-            item: '',
-            productBrand: '',
-            category: '',
-            timing: '',
-            requiredQty: 0,
-            purchasedQty: 0,
-            unitPrice: 0,
-            totalCost: 0,
-            readyStatus: READY_STATUS.READY,
-            notes: '',
-            source: '',
-            image: ''
-        };
-        setTableData(prev => [...prev, newRow]);
-    };
 
     return (
         <ChakraProvider>
