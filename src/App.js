@@ -32,8 +32,6 @@ import {
     READY_TIMING,
     getColumnDefinitions
 } from './constants';
-import { READY_STATUS_COLORS } from './constants/readyStatusConstants';
-import { READY_TIMING_COLORS } from './constants/readyTimingConstants';
 import { TableComponent } from './components/TableComponent';
 
 import { useTableHandlers } from './hooks/useTableHandlers';
