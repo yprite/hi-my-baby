@@ -27,11 +27,15 @@ import {
     Td
 } from '@chakra-ui/react';
 
-import { READY_STATUS, READY_STATUS_COLORS } from './constants/readyStatusConstants';
-import { READY_TIMING, READY_TIMING_COLORS } from './constants/readyTimingConstants';
+import {
+    READY_STATUS,
+    READY_TIMING,
+    getColumnDefinitions
+} from './constants';
+import { READY_STATUS_COLORS } from './constants/readyStatusConstants';
+import { READY_TIMING_COLORS } from './constants/readyTimingConstants';
 import { TableComponent } from './components/TableComponent';
 
-import { getColumnDefinitions } from './constants/columnDefinitions';
 import { useTableHandlers } from './hooks/useTableHandlers';
 
 

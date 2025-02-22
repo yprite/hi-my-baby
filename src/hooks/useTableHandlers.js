@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { getNextReadyStatus } from '../utils/readyStatusUtils';
 import { getNextTimingStatus } from '../utils/timingStatusUtils';
-import { READY_STATUS } from '../constants/readyStatusConstants';
+import { READY_STATUS } from '../constants';
 
 export const useTableHandlers = (initialData) => {
     const [tableData, setTableData] = useState(initialData);

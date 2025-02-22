@@ -17,10 +17,14 @@ import {
 
 import { EditableCell } from '../components/EditableCell';
 import { ImageUploader } from '../components/ImageUploader';
-import { CELL_TYPES, CELL_TYPES_KOREAN } from './cellTypes';
-import { CATEGORIES, CATEGORY_COLORS } from './categoryConstants';
-import { READY_TIMING_COLORS } from './readyTimingConstants';
-import { READY_STATUS_COLORS } from './readyStatusConstants';
+import {
+    CELL_TYPES,
+    CELL_TYPES_KOREAN,
+    CATEGORIES,
+    CATEGORY_COLORS,
+    READY_TIMING_COLORS,
+    READY_STATUS_COLORS
+} from '../constants';
 
 const renderHeader = (text, icon) => (
     <HStack spacing={2}>
